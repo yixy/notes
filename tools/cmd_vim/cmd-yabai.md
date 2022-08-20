@@ -1,4 +1,4 @@
-﻿# cmd-yabai #
+﻿# cmd-yabai
 
 使用yabai需要关闭mac的SIP。
 

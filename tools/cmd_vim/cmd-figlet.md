@@ -1,4 +1,4 @@
-﻿# cmd-figlet #
+﻿# cmd-figlet
 
 ```
 $ figlet Hello World

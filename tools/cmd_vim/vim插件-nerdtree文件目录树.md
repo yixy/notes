@@ -1,4 +1,4 @@
-﻿# vim插件-nerdtree文件目录树 #
+﻿# vim插件-nerdtree文件目录树 
 
 https://github.com/preservim/nerdtree
 

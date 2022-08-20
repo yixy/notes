@@ -1,4 +1,4 @@
-﻿# vim插件-vimwiki #
+﻿# vim插件-vimwiki
 
 相关配置。
 

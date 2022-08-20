@@ -1,4 +1,4 @@
-﻿# vim-常用配置 #
+﻿# vim-常用配置
 
 vim配置文件在`~/.vimrc`
 
@@ -14,13 +14,13 @@ $ vim ~/.vimrc
 :source ~/.vimrc
 ```
 
-## 1. 开启语法高亮 ##
+## 1. 开启语法高亮 
 
 ```
 syntax on
 ```
 
-## 2. 高亮配色方案 ##
+## 2. 高亮配色方案 
 
 查看系统自带的配色方案：
 
@@ -48,7 +48,7 @@ hi Visual ctermbg=30
 set t_Co=256
 ```
 
-## 3 键位映射 ##
+## 3 键位映射 
 
 ```
 #noremap for no Recursion
@@ -62,7 +62,7 @@ map Q :q<CR>
 map R :source $MYVIMRC<CR>
 ```
 
-## 4 基本配置 ##
+## 4 基本配置 
 
 ```
 "显示行号
@@ -156,7 +156,7 @@ set timeoutlen=200
 map <LEADER><LEADER> <ESC>/<++><CR>:nohlsearch<CR>c4l
 ```
 
-## 5. 插件配置 ##
+## 5. 插件配置 
 
 选择vim-plug这款插件管理器。
 
@@ -183,7 +183,7 @@ Plug 'tomasr/molokai'
 call plug#end ()
 ```
 
-## 6 分屏与tab配置 ##
+## 6 分屏与tab配置 
 
 ```
 "设定光标所在屏，并打开分屏
@@ -214,7 +214,7 @@ map th :-tabnext<CR>
 map tl :+tabnext<CR>
 ```
 
-## 7 粘贴版 ##
+## 7 粘贴版 
 
 你的 Vim Build 没有支持 clipboard，那么无论怎样配置都不会生效。 可以用如下命令检查：
 
@@ -237,7 +237,7 @@ vim --version | grep clipboard
 
 同步剪切板和匿名寄存器，在 ~/.vimrc 添加配置比如 `set clipboard=unnamed`。
 
-## 8 16进制编辑 ##
+## 8/16进制编辑
 
 开启16进制模式。
 

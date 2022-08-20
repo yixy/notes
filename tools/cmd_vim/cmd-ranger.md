@@ -1,6 +1,6 @@
-﻿# cmd-ranger #
+﻿# cmd-ranger
 
-## 1 生成默认配置文件 ##
+## 1 生成默认配置文件
 
 ```
 $ ranger --copy-config=all
@@ -13,7 +13,7 @@ commands.py      commands_full.py rc.conf          rifle.conf       scope.sh
 * rifle.conf：打开方式
 * scope.sh：预览脚本
 
-## 2 快捷键与命令 ##
+## 2 快捷键与命令
 
 * `hjkl`：移动光标
 * `[`和`]`：移动最左列光标。
@@ -37,7 +37,7 @@ commands.py      commands_full.py rc.conf          rifle.conf       scope.sh
 
 * `:bulkrename`
 
-## 3 自定义配置 ##
+## 3 自定义配置
 
 ```
 set vcs_aware true
@@ -50,7 +50,7 @@ map dT shell trash %s
 map <DELETE>   trash %s
 ```
 
-## 4 troubleshotting ##
+## 4 troubleshotting
 
 预览文件时卡顿死掉，社区里暂未解决，关掉预览文件功可规避该问题。
 

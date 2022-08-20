@@ -1,4 +1,4 @@
-﻿# cmd-iterm2 #
+﻿# cmd-iterm2
 
 iTerm2是一款完全免费的，专为 Mac OS 用户打造的命令行应用。
 

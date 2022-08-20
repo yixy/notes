@@ -1,6 +1,6 @@
-﻿# vim插件-markdown插件 #
+﻿# vim插件-markdown插件 
 
-## 1 markdown-preview.nvim ##
+## 1 markdown-preview.nvim 
 
 https://github.com/iamcco/markdown-preview.nvim
 
@@ -105,7 +105,7 @@ let g:mkdp_filetypes = ['markdown']
 let g:mkdp_theme = 'dark'
 ```
 
-## 2 vim-table-mode ##
+## 2 vim-table-mode 
 
 https://github.com/dhruvasagar/vim-table-mode
 
