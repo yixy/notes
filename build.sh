@@ -3,7 +3,7 @@
 dirs=`find . -type dir | grep -v "./.git"`
 for dir in ${dirs};do
   if [ "$dir" != "." ];then
-    files=`ls "$dir" | grep -E "\.md$" | grep -E -v "^index.md$" |grep -E -v "^mind.md$"`
+    files=`ls "$dir" | grep -E "\.md$" | grep -E -v "^index.md$" |grep -E -v "^attach.md$"`
     if [ -z "$files" ];then
       continue;
     fi
@@ -12,8 +12,8 @@ for dir in ${dirs};do
     fi
     dirname=`basename $dir`
     echo -e "# $dirname\n" > "$dir"/index.md
-    if [ -f "$dir"/mind.md ];then
-      cat "$dir"/mind.md >> "$dir"/index.md
+    if [ -f "$dir"/attach.md ];then
+      cat "$dir"/attach.md >> "$dir"/index.md
     fi
     for file in ${files};do
       filename=${file%*${file:(-3)}}

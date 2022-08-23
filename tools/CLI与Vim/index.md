@@ -1,4 +1,4 @@
-# cmd_vim
+# CLI与Vim
 
 ```mermaid
 graph LR
@@ -15,15 +15,15 @@ vim插件 --> markdown-preview.nvim
 vim插件 --> vim-table-mode
 vim插件 --> coc.nvim
 ```
-[01.cmd-iterm2](01.cmd-iterm2.md)
+[01.cli-iterm2](01.cli-iterm2.md)
 
-[02.cmd-oh-my-sh](02.cmd-oh-my-sh.md)
+[02.cli-oh-my-sh](02.cli-oh-my-sh.md)
 
-[03.cmd-yabai](03.cmd-yabai.md)
+[03.cli-yabai](03.cli-yabai.md)
 
-[04.cmd-ranger](04.cmd-ranger.md)
+[04.cli-ranger](04.cli-ranger.md)
 
-[05.cmd-figlet](05.cmd-figlet.md)
+[05.cli-figlet](05.cli-figlet.md)
 
 [06.vim-快捷键](06.vim-快捷键.md)
 
