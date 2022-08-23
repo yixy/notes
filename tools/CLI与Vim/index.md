@@ -2,11 +2,11 @@
 
 ```mermaid
 graph LR
-cmd --> iterm2
-cmd --> oh-my-zsh
-cmd --> yabai
-cmd --> ranger
-cmd --> figlet
+cli --> iterm2
+cli --> oh-my-zsh
+cli --> yabai
+cli --> ranger
+cli --> figlet
 vim --> 快捷键
 vim --> 基本配置
 vim --> vim插件

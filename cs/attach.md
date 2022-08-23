@@ -1,5 +1,3 @@
-# cs
-
 ```mermaid
 graph LR
 计算机层次结构 --> application
@@ -14,12 +12,4 @@ graph LR
 计算机层次结构 --> devices
 计算机层次结构 --> physics
 ```
-
-[01.计算机系统组成和分层抽象结构](01.计算机系统组成和分层抽象结构.md)
-
-[02.计算机领域中解决问题的基本思路](02.计算机领域中解决问题的基本思路.md)
-
-[03.字节序Endianness](03.字节序Endianness.md)
-
-[04.KiB、KB与bps](04.KiB、KB与bps.md)
 
