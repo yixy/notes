@@ -4,5 +4,7 @@
 
 [cs](cs) 一些CS相关的概念
 
+[cs/计算机组成与体系结构](cs/计算机组成与体系结构) 计算机组成原理，计算机体系结构
+
 [tools/CLI与Vim](tools/CLI与Vim) 命令行与vim相关
 
