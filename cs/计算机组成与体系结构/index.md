@@ -61,6 +61,19 @@ MemoryConsistencyModel === 写原子性StoreAtomicity问题,即处理器的写�
 计算机组成与体系结构 --> 性能指标:机器字长\运算速度\主存大小\外部设备容量与存取速度
 
 ```
+
+## 书单
+
+计算机体系结构：量化研究方法（John Hennessy / David Patterson）2012年 第5版
+
+A Primer on Memory Consistency and Cache Coherence
+
+数据库系统概念
+
+https://github.com/GHScan/TechNotes/blob/master/2017/Memory_Model.md
+
+## 笔记
+
 [01.前言-CA_CO_微机原理与接口](01.前言-CA_CO_微机原理与接口.md)
 
 [02.体系结构的发展1-早期时代](02.体系结构的发展1-早期时代.md)
