@@ -1,0 +1,18 @@
+﻿# 数据库事务-ACID.md #
+
+## 1 数据库事务与ACID ##
+
+在数据库系统中，一个事务是指：由一系列数据库操作组成的一个完整的逻辑过程。
+
+ACID是衡量事务的四个特性，指数据库管理系统（DBMS）在写入或更新资料的过程中，为保证事务（transaction）是正确可靠的，所必须具备的四个特性：原子性（atomicity，或称不可分割性）、一致性（consistency）、隔离性（isolation，又称独立性）、持久性（durability）。
+
+**事务的意义在于保障数据的可靠性，ACID里，数据的可靠性是业务的根本需求，包含可靠的存储和可靠的更新两个方面。**
+
+> Transactions are not a law of nature; they were created with a purpose, namely to simplify the programming model for applications accessing a database. By using transactions, the application is free to ignore certain potential error scenarios and concurrency issues, because the database takes care of them instead (we call these safety guarantees).这句话的大体含义就是,事务的产生,其实是为了当应用程序访问数据库的时候,事务能够简化我们的编程模型,不需要我们去考虑各种各样的潜在错误和并发问题。因此事务本质上是为了应用层服务的.而不是伴随着数据库系统天生就有的.
+
+* Atomicity（原子性）：一个事务（transaction）中的所有操作，要么全部完成，要么全部不完成，不会结束在中间某个环节。事务在执行过程中发生错误，会被恢复（Rollback）到事务开始前的状态，就像这个事务从来没有执行过一样。
+* Consistency（一致性）：在事务开始之前和事务结束以后，数据库的完整性没有被破坏。这保证事务只能把数据库从一个有效（正确）的状态“转移”到另一个有效（正确）的状态。那么，什么是数据库的有效(正确）的状态？满足给这个数据库pred-defined的一些规则的状态都是 valid 的。这些规则有哪些呢，比如说constraints, cascades,triggers 及它们的组合等。ACID中的C一致性仅保证数据库级约束的正确性，不保证业务上的约束（那是业务代码的校验来实现的）。
+* Isolation（隔离性）：数据库允许多个并发事务同时对其数据进行读写和修改的能力，隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致。事务隔离分为不同级别，包括读未提交（Read uncommitted）、读提交（read committed）、可重复读（repeatable read）和串行化（Serializable）。
+* Durability（持久性）：事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失。
+
+在 ACID 里，A/D 是基础，而 C/I 看业务场景。
