@@ -108,35 +108,31 @@ https://github.com/GHScan/TechNotes/blob/master/2017/Memory_Model.md
 
 [17.存储设备-磁盘阵列RAID](17.存储设备-磁盘阵列RAID.md)
 
-[18.输入输出-IO模块与IO寻址](18.输入输出-IO模块与IO寻址.md)
+[18.输入输出-IO设备](18.输入输出-IO设备.md)
 
-[19.输入输出-IO操作技术](19.输入输出-IO操作技术.md)
+[19.cache原理-时间空间的局部性](19.cache原理-时间空间的局部性.md)
 
-[20.输入输出-IO通道和IO处理器](20.输入输出-IO通道和IO处理器.md)
+[20.cache原理-缓存的读与写](20.cache原理-缓存的读与写.md)
 
-[21.cache原理-时间空间的局部性](21.cache原理-时间空间的局部性.md)
+[21.cache原理-缓存替换算法](21.cache原理-缓存替换算法.md)
 
-[22.cache原理-缓存的读与写](22.cache原理-缓存的读与写.md)
+[22.cache-存储结构与映射方式](22.cache-存储结构与映射方式.md)
 
-[23.cache原理-缓存替换算法](23.cache原理-缓存替换算法.md)
+[23.cache-三级缓存设计](23.cache-三级缓存设计.md)
 
-[24.cache-存储结构与映射方式](24.cache-存储结构与映射方式.md)
+[24.cache-缓存优化技术](24.cache-缓存优化技术.md)
 
-[25.cache-三级缓存设计](25.cache-三级缓存设计.md)
+[25.ILP-指令集并行](25.ILP-指令集并行.md)
 
-[26.cache-缓存优化技术](26.cache-缓存优化技术.md)
+[26.DLP-数据级并行](26.DLP-数据级并行.md)
 
-[27.ILP-指令集并行](27.ILP-指令集并行.md)
+[27.TLP-线程级并行](27.TLP-线程级并行.md)
 
-[28.DLP-数据级并行](28.DLP-数据级并行.md)
+[28.TLP-CacheCoherent](28.TLP-CacheCoherent.md)
 
-[29.TLP-线程级并行](29.TLP-线程级并行.md)
+[29.TLP-MemoryModel](29.TLP-MemoryModel.md)
 
-[30.TLP-CacheCoherent](30.TLP-CacheCoherent.md)
+[30.性能指标-机器字长与OS位数](30.性能指标-机器字长与OS位数.md)
 
-[31.TLP-MemoryModel](31.TLP-MemoryModel.md)
-
-[32.性能指标-机器字长与OS位数](32.性能指标-机器字长与OS位数.md)
-
-[33.性能指标-衡量计算机性能的因素](33.性能指标-衡量计算机性能的因素.md)
+[31.性能指标-衡量计算机性能的因素](31.性能指标-衡量计算机性能的因素.md)
 
