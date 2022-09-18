@@ -1,5 +1,15 @@
 # 04_操作系统
 
+
+## 书单
+
+Operating Systems: Three Easy Pieces （操作系统导论）
+
+Operating Systems (现代操作系统 Tanenbaum)
+
+## 笔记
+
+
 [01.操作系统概念](01.操作系统概念.md)
 
 [02.核心概念-虚拟化、并发、持久性](02.核心概念-虚拟化、并发、持久性.md)
