@@ -12,7 +12,7 @@ https://github.com/GHScan/TechNotes/blob/master/2017/Memory_Model.md
 
 ## 笔记
 
-![](https://raw.githubusercontent.com/yixy4app/images/picgo/202307231520971.png)
+![](https://raw.githubusercontent.com/yixy4app/images/picgo/202307231543069.png)
 [01.前言-CA_CO_微机原理与接口](01.前言-CA_CO_微机原理与接口.md)
 
 [02.体系结构的发展1-早期时代](02.体系结构的发展1-早期时代.md)
