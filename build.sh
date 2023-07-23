@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dirs=`find . -type dir | grep -v "./.git"`
+dirs=`find . -type d | grep -v "./.git"`
 for dir in ${dirs};do
   if [ "$dir" != "." ];then
     files=`ls "$dir" | grep -E "\.md$" | grep -E -v "^index.md$" |grep -E -v "^attach.md$"`

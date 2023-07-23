@@ -1,0 +1,88 @@
+<mxfile host="app.diagrams.net" modified="2023-07-16T10:19:29.519Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" etag="D4KtFdlploLSYKrsYscu" version="21.6.2" type="device">
+  <diagram name="Page-1" id="cvXSWK5xNN1lDnMPLhcM">
+    <mxGraphModel dx="1433" dy="776" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-1" value="Application" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="90" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-2" value="Algorithm" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="130" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-3" value="Programming Language" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="170" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-4" value="Operating System/Virtual machine" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="210" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-5" value="Instruction Set Architecture" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="250" width="230" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-6" value="Microarchitecture&lt;br&gt;+&lt;br&gt;Memorysystem&amp;amp;IOsystem" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="320" width="230" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-7" value="Register-Transfer Level" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="460" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-8" value="Gates" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="500" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-9" value="Circuits" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="540" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-10" value="Devices" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="580" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-11" value="Physics" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="620" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-12" value="Silicon Process Technology" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="625" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-13" value="Transistors and Wires" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="580" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-14" value="Combine devices to do useful work" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="545" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-15" value="Boolean logic gates and functions" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="505" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-16" value="How data flows through system" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="465" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-17" value="[1]How an ISA is implemented in a processor arch:includes the constituent parts of the processor&amp;nbsp;and how these interconnect and interoperate to implement the ISA.&lt;br&gt;[2]Memory System &amp;amp; IO System" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="330" width="190" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-18" value="ISA: RISC-V, X86, ARM etc&lt;br&gt;The programming interfaces between software and hardware" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="260" width="190" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-20" value="Windows, Linux, MacOS etc，Handles low-level hardware management" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="215" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-21" value="C Implementation of sort algorithm" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="550" y="170" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-22" value="Some sort algorithm" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="550" y="135" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-23" value="App for sort numbers" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="550" y="95" width="190" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-24" value="" style="endArrow=none;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="230" y="250" as="sourcePoint" />
+            <mxPoint x="550" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-25" value="Hardware" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="230" y="260" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Qj2hZet0P5MgaWWJv4Pi-26" value="Software" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="230" y="215" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
