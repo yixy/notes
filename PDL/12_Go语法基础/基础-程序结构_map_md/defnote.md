@@ -1,0 +1,114 @@
+﻿# 基础——程序结构(map) #
+
+## 1. Map基础 ##
+
+map 存储键值对。map 的文法跟结构体文法相似，不过必须有键名。map 在使用之前必须用 make 而不是 new 来创建；值为 nil 的 map 是空的，并且不能赋值。
+
+* Go 语言字典的键类型不可以是函数类型、字典类型和切片类型。因为Go 语言的字典类型其实是一个哈希表（hash table）的特定实现，因为hash值有可能相同，在这种情况下需要使用原来的key去做比较，所以map的key只能是任意定义了==与!=操作的类型。
+* 注意，如果键的类型是接口类型或是数组类型，那么键的实际（元素）类型也不能是函数类型、字典类型和切片类型，否则在程序运行过程中会引发 panic。
+* Map的value可以是一个函数
+* 与Dock type接口方式一起实现单一方法对象的工厂模式
+* Map本身是值传递，但是由于包含指针，有类似引用的副作用：
+
+```
+//可以选择在创建时指定map的存储能力，分配合适空间，避免重复分配内存，提高性能
+m=make (map[string] string,100)
+//其他初始化方式
+m:=map[int]int{1,2,3}
+n:=map[int]string{}
+//在 map m 中插入或修改一个元素：
+m[key] = elem
+//获得元素：
+elem = m[key]
+//删除元素：
+delete(m, key)
+//通过双赋值检测某个键存在。如果 key 在 m 中，`ok` 为 true 。否则， ok 为 `false`，并且 elem 是 map 的元素类型的零值。
+elem, ok = m[key]
+```
+
+同样的，当从 map 中读取某个不存在的键时，结果是 map 的元素类型的零值。
+
+内置函数len返回map拥有的key的数量。
+
+for 循环的 range 格式可以对 slice 或者 map 进行迭代循环。
+
+## 2. 非线程安全的Map & sync.Map & concurrent_map ##
+
+在Go 1.6之前， 内置的map类型是非goroutine安全的，即并发的读没有问题，并发的读写可能存在脏数据（注意，多读一写实际上也是可能有脏数据的）。自go 1.6之后， 程序检测到并发地读写map时会报错（fatal error: concurrent map writes），这在一些知名的开源库中都存在这个问题。
+
+```
+//非安全的并发读写map，可能导致程序报错
+package main
+
+import (
+    "fmt"
+    "sync"
+)
+func main(){
+    c := make(map[string]int)
+    for j := 0; j < 1000000; j++ {
+        c[fmt.Sprintf("%s", j)] = j
+    }
+    var w sync.WaitGroup
+
+    for i := 0; i < 100; i++ {
+        go func() {
+            w.Add(1)
+            for j := 0; j < 1000000; j++ {
+                fmt.Println(c[fmt.Sprintf("%s", j)])
+                //c[fmt.Sprintf("%s",j)]=j
+            }
+            w.Done()
+        }()
+    }
+
+    for j := 0; j < 1000000; j++ {
+        //fmt.Println(c[fmt.Sprintf("%s", j)])
+        c[fmt.Sprintf("%s",j)]=j
+    }
+    w.Wait()
+}
+```
+
+所以go 1.9之前的解决方案是额外绑定一个锁，封装成一个新的struct或者单独使用锁都可以。但是采用内置的Map加读写锁的机制，会lock整个map所以性能不是很好。
+
+```
+package main
+import (
+    "fmt"
+    "sync"
+)
+type syncMap struct {
+    items map[string]int
+    sync.RWMutex
+}
+func main() {
+    c := &syncMap{items: make(map[string]int)}
+    var w sync.WaitGroup
+    for i := 0; i < 100; i++ {
+        go func() {
+            w.Add(1)
+            for j := 0; j < 1000000; j++ {
+                //读写锁
+                c.Lock()
+                c.items[fmt.Sprintf("%d", j)] = j
+                c.Unlock()
+            }
+            w.Done()
+        }()
+    }
+    w.Wait()
+}
+//读锁
+//counter.RLock()
+//counter.RUnlock()
+```
+
+以上方案存在的问题：
+
+* 读写锁的粒度太大了，保护了整个 map 的访问。写操作是阻塞的，此时其他任何读操作都无法进行。
+* 如果内部的 map 存储了很多 key，GC 的时候就需要扫描很久。
+
+golang1.9开始，提供sync.Map以支持并发安全的map。sync.Map采用了空间换时间的方案，并且采用指针的方式间接实现值的映射，所以存储空间会较built-in map大。sync.Map具体的实现方式是维护两块空间readonly和dirty，写的时候写到dirty区，读的时候先读readonly（无锁），如果miss再读dirty（加锁）并且将其移动到readonly。可以看出这种实现适合读多写少，且Key相对稳定的场景。经验值是适用于读写比9:1的（读90%），写更多的情况下性能下降很多，可以使用concurrent_map，1:1对写场景下比sync.Map性能更好。
+
+区别于整个map+读写锁的方式，concurrent_map（`https://github.com/easierway/concurrent_map`）采用了将map分区然后加锁的方式，降低了锁冲突的概率。
