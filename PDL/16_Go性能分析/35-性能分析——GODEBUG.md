@@ -1,0 +1,93 @@
+﻿调试是确定程序行为异常的原因的过程。调试器使我们能够了解程序的执行情况和当前状态。有几种调试方式；本节将只关注将调试器附加到程序和核心转储调试。Go 用户大多使用以下调试器：
+
+* GDB
+* Delve
+
+Go 通过标准 Go 编译器和 Gccgo 提供 GDB 支持。堆栈管理、线程和运行时包含与 GDB 预期的执行模型有很大不同的方面，即使程序是用 gccgo 编译的，它们也会混淆调试器。尽管 GDB 可用于调试 Go 程序，但它并不理想并且可能会造成混淆。
+
+
+————————下面的和GDB的关系？
+
+
+
+# 性能分析——GODEBUG #
+
+Go 的 runtime 可以收集程序运行周期内的很多数据。这些收集默认都是不启用的，可以手动启用特定信息的收集。当你的程序运行时，GODEBUG环境变量可以产生运行时的调试信息。你可以请求垃圾回收器和调度器(scheduler)的摘要信息和细节。关键是你不需要额外创建单独的编译程序就可以实现。
+
+## 1. 调度器摘要信息 ##
+
+schedtrace参数告诉运行时打印一行调度器的摘要信息到标准err输出中，时间间隔可以指定，单位毫秒，如下所示。
+
+```
+GOMAXPROCS=1 GODEBUG=schedtrace=1000 ./example
+```
+
+程序开始后每个一秒就会打印一行调度器的概要信息，程序本身没有任何输出，所以我们只关注输出的跟踪信息。让我们先看前两行：
+
+```
+SCHED 0ms: gomaxprocs=1 idleprocs=0 threads=2 spinningthreads=0 idlethreads=0
+runqueue=0 [1]
+SCHED 1009ms: gomaxprocs=1 idleprocs=0 threads=3 spinningthreads=0 idlethreads=1
+runqueue=0 [9]
+```
+
+让我们分解每一个项，看看它们分别代表什么含义。
+
+```
+输出项 意义
+1009ms  自从程序开始的毫秒数
+gomaxprocs=1    配置的处理器数(逻辑的processor，也就是Go模型中的P,会通过操作系统的线程绑定到一个物理处理器上)
+threads=3   运行期管理的线程数，目前三个线程
+idlethreads=1   空闲的线程数,当前一个线程空闲，两个忙
+idleprocs=0 空闲的处理器数,当前0个空闲
+runqueue=0  在全局的run队列中的goroutine数，目前所有的goroutine都被移动到本地run队列
+[9] 本地run队列中的goroutine数，目前9个goroutine在本地run队列中等待
+```
+
+调度器的摘要信息很有帮助，但是有时候你需要更深入的了解它的细节。在这种情况下，我们可以使用scheddetail 参数，可以提供处理器P,线程M和goroutine G的细节。让我们再运行一下程序，增加scheddetail 参数:
+
+```
+GOMAXPROCS=2 GODEBUG=schedtrace=1000,scheddetail=1 ./example
+```
+
+## 2. 查看垃圾回收信息 ##
+
+如果你关心垃圾收集，则可以启用 gctrace=1 标志。如：
+
+```
+$ env GODEBUG=gctrace=1 godoc -http=:8080
+gc 1 @18446741350.644s 0%: 0.026+2.0+0.075 ms clock, 0.052+2.6/2.0/0+0.15 ms cpu, 4->4->0 MB, 5 MB goal, 4 P
+gc 2 @18446741350.664s 0%: 0.12+1.5+0.049 ms clock, 0.25+0.50/1.2/0+0.098 ms cpu, 4->4->1 MB, 5 MB goal, 4 P
+gc 3 @18446741350.695s 0%: 0.024+1.1+0.059 ms clock, 0.072+1.3/0.96/0+0.17 ms cpu, 4->4->1 MB, 5 MB goal, 4P
+gc 4 @18446741350.714s 0%: 0.036+1.8+0.092 ms clock, 0.11+1.4/1.7/0+0.27 ms cpu, 4->4->1 MB, 5 MB goal, 4 P
+gc 5 @18446741350.746s 0%: 0.021+2.2+0.055 ms clock, 0.087+2.5/2.1/0+0.22 ms cpu, 4->4->1 MB, 5 MB goal, 4 P
+gc 6 @18446741350.770s 0%: 0.013+4.5+0.12 ms clock, 0.053+1.3/3.9/0+0.50 ms cpu, 4->4->1 MB, 5 MB goal, 4 P
+gc 7 @18446741350.800s 0%: 0.020+2.5+0.056 ms clock, 0.083+2.4/2.5/0+0.22 ms cpu, 4->4->2 MB, 5 MB goal, 4 P
+gc 8 @18446741350.817s 0%: 0.030+3.2+0.053 ms clock, 0.12+2.8/3.0/0+0.21 ms cpu, 4->4->2 MB, 5 MB goal, 4 P
+gc 9 @18446741350.845s 0%: 0.041+4.7+0.10 ms clock, 0.16+1.6/4.3/0+0.40 ms cpu, 4->4->2 MB, 5 MB goal, 4 P
+gc 10 @18446741350.881s 0%: 0.018+3.7+0.070 ms clock, 0.072+2.5/3.6/0+0.28 ms cpu, 4->4->2 MB, 5 MB goal, 4
+...
+```
+
+这样的话，垃圾收集的信息都会被输出出来，可以帮助 GC 排障。如果发现 GC 一直都在很忙碌的工作，那恐怕内存管理上有可以改进的地方。
+
+go test中的trace参数可以用于分析GC，也可以分析processor的状况。
+
+```
+//测试程序输出trace信息
+go test -trace trace.out
+
+//可视化trace信息
+go tool trace trace.out
+```
+
+可以通过在源码中调用API的方式，生成更细粒度的trace文件。
+
+```
+trace.Start
+trace.Stop
+```
+
+## 参考 ##
+
+https://colobu.com/2016/04/19/Scheduler-Tracing-In-Go/

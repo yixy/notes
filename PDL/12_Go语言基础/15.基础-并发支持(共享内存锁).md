@@ -1,0 +1,218 @@
+﻿# 基础——并发支持(共享内存锁) #
+
+注意，即使只使用读锁，也会有性能开销的。
+
+尽管 Golang 推荐通过 channel 进行通信和同步，但在实际开发中通过共享内存来进行通信同步的方式也是很常见的，Golang提供了 sync 包的支持。另外 sync 下还有一个 atomic 包，提供了一些底层的原子操作。
+
+golang1.9以前，可以通过绑定读写锁实现map的并发安全操作。
+
+## 1. sync.RWMutex ##
+
+golang 中的 sync 包实现了两种锁：
+
+* Mutex：互斥锁
+* RWMutex：读写锁，RWMutex 基于 Mutex 实现
+
+Mutex 为互斥锁，Lock() 加锁，Unlock() 解锁。在一个 goroutine 获得 Mutex 后，其他 goroutine 只能等到这个 goroutine 释放该 Mutex。使用 Lock() 加锁后，不能再继续对其加锁，直到利用 Unlock() 解锁后才能再加锁。在 Lock() 之前使用 Unlock() 会导致 panic 异常。已经锁定的 Mutex 并不与特定的 goroutine 相关联，这样可以利用一个 goroutine 对其加锁，再利用其他 goroutine 对其解锁。在同一个 goroutine 中的 Mutex 解锁之前再次进行加锁，会导致死锁。适用于读写不确定，并且只有一个读或者写的场景
+
+RWMutex 是单写多读锁，该锁可以加多个读锁或者一个写锁。读锁占用的情况下会阻止写，不会阻止读，多个 goroutine 可以同时获取读锁。写锁会阻止其他 goroutine（无论读和写）进来，整个锁由该 goroutine 独占。适用于读多写少的场景。
+
+
+
+## 3. sync.Pool ##
+
+对象缓存。
+
+sync.Pool分为一个私有对象（协程安全）和共享池（协程不安全）。首先获取当前Processor的私有对象，当私有对象不存在时，尝试从当前Processor的共享池获取。如果当前Processor共享池也是空的，那么就尝试去其他processor的共享池获取。如果所有共享池都是空的，最后就用用户指定的New函数产生一个新的对象返回。
+
+* GC会清除sync.Pool缓存的对象
+* 对象的缓存有效期为下一次GC之前
+
+注意：
+
+* 因为协程安全，所以会有锁开销。需要评估创建复杂对象和GC代价与锁开销的平衡，决定是否使用
+* 生命周期受GC影响，不适合于做连接池。连接池需要自己管理生命周期的资源池化
+
+```
+pool:=&sync.Pool{
+    New:func() interface{}{
+        return 0
+    },
+}
+arry:=pool.Get().(init)
+...
+pool.Put(10)
+```
+
+## 4. sync.atomic ##
+
+sync.atomic提供了原子操作的支持，原子操作直接有底层CPU硬件支持，因而一般要比基于操作系统API的锁方式效率高些。atomic 提供的原子操作能够确保任一时刻只有一个goroutine对变量进行操作，善用 atomic 能够避免程序中出现大量的锁操作。
+
+atomic常见操作有：
+
+* 增减
+* 载入
+* 比较并交换
+* 交换
+* 存储
+
+***增减操作***
+
+atomic 包中提供了如下以Add为前缀的增减操作:
+
+```
+func AddInt32(addr *int32, delta int32) (new int32)
+func AddInt64(addr *int64, delta int64) (new int64)
+func AddUint32(addr *uint32, delta uint32) (new uint32)
+func AddUint64(addr *uint64, delta uint64) (new uint64)
+func AddUintptr(addr *uintptr, delta uintptr) (new uintptr)
+```
+
+需要注意的是，第一个参数必须是指针类型的值，通过指针变量可以获取被操作数在内存中的地址，从而施加特殊的CPU指令，确保同一时间只有一个goroutine能够进行操作。
+
+使用举例：
+
+```
+package main
+import (
+    "fmt"
+    "sync/atomic"
+    "time"
+)
+
+func main() {
+   var opts int64 = 0
+
+   for i := 0; i < 50; i++ { 
+       // 注意第一个参数必须是地址
+       atomic.AddInt64(&opts, 3) //加操作
+       //atomic.AddInt64(&opts, -1) 减操作
+       time.Sleep(time.Millisecond)
+   }
+   time.Sleep(time.Second)
+
+   fmt.Println("opts: ", atomic.LoadInt64(&opts))
+}
+```
+
+***载入操作***
+
+atomic 包中提供了如下以Load为前缀的增减操作:
+
+```
+func LoadInt32(addr *int32) (val int32)
+func LoadInt64(addr *int64) (val int64)
+func LoadPointer(addr *unsafe.Pointer) (val unsafe.Pointer)
+func LoadUint32(addr *uint32) (val uint32)
+func LoadUint64(addr *uint64) (val uint64)
+func LoadUintptr(addr *uintptr) (val uintptr)
+```
+
+载入操作能够保证原子的读变量的值，当读取的时候，任何其他CPU操作都无法对该变量进行读写，其实现机制受到底层硬件的支持。见上述例子中的atomic.LoadInt64(&opts)。
+
+***比较并交换***
+
+该操作简称 CAS(Compare And Swap)。 这类操作的前缀为 CompareAndSwap :
+
+```
+func CompareAndSwapInt32(addr *int32, old, new int32) (swapped bool)
+func CompareAndSwapInt64(addr *int64, old, new int64) (swapped bool)
+func CompareAndSwapPointer(addr *unsafe.Pointer, old, new unsafe.Pointer) (swapped bool)
+func CompareAndSwapUint32(addr *uint32, old, new uint32) (swapped bool)
+func CompareAndSwapUint64(addr *uint64, old, new uint64) (swapped bool)
+func CompareAndSwapUintptr(addr *uintptr, old, new uintptr) (swapped bool)
+```
+
+该操作在进行交换前首先确保变量的值未被更改，即仍然保持参数 old 所记录的值，满足此前提下才进行交换操作。CAS的做法类似操作数据库时常见的乐观锁机制。
+
+需要注意的是，当有大量的goroutine 对变量进行读写操作时，可能导致CAS操作无法成功，这时可以利用for循环多次尝试。
+
+使用示例：
+
+```
+var value int64
+func atomicAddOp(tmp int64) {
+for {
+       oldValue := value
+       if atomic.CompareAndSwapInt64(&value, oldValue, oldValue+tmp) {
+           return
+       }
+   }
+}
+```
+
+***交换***
+
+此类操作的前缀为 Swap：
+
+```
+func SwapInt32(addr *int32, new int32) (old int32)
+func SwapInt64(addr *int64, new int64) (old int64)
+func SwapPointer(addr *unsafe.Pointer, new unsafe.Pointer) (old unsafe.Pointer)
+func SwapUint32(addr *uint32, new uint32) (old uint32)
+func SwapUint64(addr *uint64, new uint64) (old uint64)
+func SwapUintptr(addr *uintptr, new uintptr) (old uintptr)
+```
+
+相对于CAS，明显此类操作更为暴力直接，并不管变量的旧值是否被改变，直接赋予新值然后返回背替换的值。
+
+***存储***
+
+此类操作的前缀为 Store：
+
+```
+func StoreInt32(addr *int32, val int32)
+func StoreInt64(addr *int64, val int64)
+func StorePointer(addr *unsafe.Pointer, val unsafe.Pointer)
+func StoreUint32(addr *uint32, val uint32)
+func StoreUint64(addr *uint64, val uint64)
+func StoreUintptr(addr *uintptr, val uintptr)
+```
+
+此类操作确保了写变量的原子性，避免其他操作读到了修改变量过程中的脏数据。
+
+## 5. sync.Once ##
+
+Go语言通过sync包可以方便的实现线程安全的单例模式。sync.Once能确保实例化对象Do方法只运行一次,内部通过互斥锁实现。
+
+```
+package main
+import (
+    "fmt"
+    "os"
+    "sync"
+)
+var printPid sync.Once
+func main() {
+
+    for i := 0; i < 10; i++ {
+        printPid.Do(func() {
+            fmt.Println("process pid:", os.Getpid())
+        })
+        fmt.Println(fmt.Sprintf("%d", i))
+    }
+}
+```
+
+Go语言通过sync包可以方便的实现线程安全的单例模式。最叹为观止的是，sync包的实现如此简单。
+
+```
+// Once is an object that will perform exactly one action.
+type Once struct {
+    m    Mutex
+    done uint32
+}
+
+func (o *Once) Do(f func()) {
+    if atomic.LoadUint32(&o.done) == 1 {
+        return
+    }
+    // Slow-path.
+    o.m.Lock()
+    defer o.m.Unlock()
+    if o.done == 0 {
+        defer atomic.StoreUint32(&o.done, 1)
+        f()
+    }
+}
+```

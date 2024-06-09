@@ -1,0 +1,68 @@
+---
+date: "2019-06-25T09:42:56+08:00"
+lastmod: "2019-06-25T09:42:56+08:00"
+title: 27-基础——序列化与反序列化(json)
+---
+# 基础——序列化与反序列化(json) #
+
+## 1. 标准库：encoding/json ##
+
+golang内置的json包使用反射实现，通过filedTag来标识对应的json值。这种方式效率较低。
+
+```
+type Content struct{
+   Code int    `json:"code"`  //filedTag
+   Msg  string `json:"msg"`   //filedTag
+ }
+ func main() {
+   var c=new(Content)
+   err:=json.Unmarshal([]byte(`{"code":"0","msg":"1"}`),&c)
+   if err!=nil{
+       panic(err)
+   }
+   fmt.Printf("%v\n", c)
+ }
+```
+
+## 2. EasyJson ##
+
+EasyJson采用代码生成而非反射。
+
+```
+go get -u github.com/mailru/easyjson/...
+```
+
+新增结构定义文件：
+
+```
+package test
+
+type User struct {
+  Name string
+  Age string
+
+}
+```
+
+生成对应easyjason的go文件
+
+```
+easyjson -all <结构体定义>.go
+```
+
+使用easyjson。
+
+```
+  u := test.User{Name:"Tom",Age:"20"}
+  b,err:=u.MarshalJSON()
+  if err!=nil{
+    panic(err)
+  }
+  var user test.User
+  user.UnmarshalJSON(b)
+  fmt.Println(user)
+```
+
+## 其他 ##
+
+Java类库（比如com.alibaba.fastjson.JSON）有容错处理。Golang标准库encoding/json校验更严格，例如，反序列化时不容忍字符串和数字互转。

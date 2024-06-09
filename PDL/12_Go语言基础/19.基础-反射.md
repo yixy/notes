@@ -1,0 +1,51 @@
+﻿# 基础——反射 #
+
+> 在Golang的实现中，每个interface变量都对应一个pair，pair记录了实际变量的值和类型。其中，value是实际变量值，type是实际变量的类型。一个interface{}类型的变量包含了2个指针，一个指针指向值的类型【对应concrete type】，另外一个指针指向实际的值【对应value】。
+
+reflect.TypeOf()是获取接口pair中的type，reflect.ValueOf()获取接口pair中的value：
+
+```
+func ValueOf(i interface{}) Value {...}
+func TypeOf(i interface{}) Type {...}
+
+//按名字访问结构成员
+reflect.ValueOf(*e).FieldByName("Name")
+
+//按名字访问结构方法
+reflect.ValueOf(e).MethodByName("Update").Call()
+```
+
+注意reflect.TypeOf返回类型reflect.Type和reflect.ValueOf返回值reflect.Value都是接口类型。其中reflect.Type也是 go 类型系统的核心，和 runtime/type.go struct _type 一致。
+
+* Name()，它会返回类型的名称，某些类型（如slice或pointer）没有名称，此方法返回空字符串
+* Kind()，返回类型
+
+```
+type User struct {
+    Name string
+    Age int
+}
+func (u User)Speak(s string){
+    fmt.Println(s)
+}
+func (u *User)Sleep(s string){
+    fmt.Println(s)
+}
+func main(){
+    user := User{
+        "jack",
+        20,
+    }
+    //如果定义一个名为Foo的struct，则kind() 返回struct，Name() 返回Foo。
+    userType := reflect.TypeOf(user)
+    fmt.Println(userType.Name())    //User
+    fmt.Println(userType.Kind())    //struct
+    fmt.Println(reflect.ValueOf(user).FieldByName("Name"))
+    fmt.Println(reflect.ValueOf(user).FieldByName("Age"))
+    //Speak()是User的方法
+    reflect.ValueOf(user).MethodByName("Speak").Call([]reflect.Value{reflect.ValueOf("hello")})
+    //Speak()是*User的方法
+    reflect.ValueOf(&user).MethodByName("Sleep").Call([]reflect.Value{reflect.ValueOf("sleep")})
+}
+```
+

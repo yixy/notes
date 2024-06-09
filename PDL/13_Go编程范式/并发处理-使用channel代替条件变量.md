@@ -1,0 +1,179 @@
+﻿# 并发处理-使用channel代替条件变量 #
+
+## 1 在Go中使用条件变量 ##
+
+使用条件变量实现Quere的例子。
+
+```
+type Queue struct {
+    mu sync.Mutex
+    items []Item
+    itemAdded sync.Cond
+}
+
+func NewQueue() *Queue { 
+    q := new(Queue)
+    q.itemAdded.L = &q.mu
+    return q 
+}
+
+func (q *Queue) Get() Item { 
+    q.mu.Lock()
+    defer q.mu.Unlock()
+    for len(q.items) == 0 { 
+        q.itemAdded.Wait()
+    }
+    item := q.items[0]
+    q.items = q.items[1:]
+    return item
+}
+
+func (q *Queue) Put(item Item) { 
+    q.mu.Lock()
+    defer q.mu.Unlock()
+    q.items = append(q.items, item)
+    q.itemAdded.Signal()
+}
+```
+
+使用条件变量时，需要考虑信号丢失、虚假唤醒等问题，导致代码实现较为复杂，代码维护更新容易出错。同时，wait()原语阻塞的协程，不能被cancel，只能等待signal信号到达。
+
+实际上，在Go中使用channel进行通信是更自然的做法。
+
+## 2 Share by communicating ##
+
+###### Queue ######
+
+使用channel实现Quere。
+
+```
+type Queue struct {
+     items chan []Item // non-empty slices only
+     empty chan bool   // holds true if the queue is empty
+}
+
+func NewQueue() *Queue {
+     items := make(chan []Item, 1) 
+     empty := make(chan bool, 1) 
+     empty <- true
+     return &Queue{items, empty}
+}
+
+func (q *Queue) Get() Item {
+    items := <-q.items
+    item := items[0]
+    items = items[1:]
+    if len(items) == 0 {
+        q.empty <- true
+} else {
+        q.items <- items
+}
+return item }
+
+func (q *Queue) Put(item Item) { var items []Item
+select {
+    case items = <-q.items:
+    case <-q.empty:
+}
+items = append(items, item) q.items <- items
+}
+```
+
+实现cancel操作的channel。
+
+```
+//cancel版本
+func (q *Queue) Get(ctx context.Context) (Item, error) { 
+    var items []Item
+    select {
+        case <-ctx.Done():
+            return 0, ctx.Err()
+        case items = <-q.items:
+    }
+    item := items[0]
+    if len(items) == 1 {
+        q.empty <- true
+    } else {
+        q.items <- items[1:]
+    }
+    return item, nil
+}
+```
+
+###### Resource Pool ######
+
+条件变量版本的资源池实现。
+
+```
+type Pool struct {
+    mu sync.Mutex
+    cond  sync.Cond
+    numConns, limit  int
+    idle []net.Conn
+}
+
+func NewPool(limit int) *Pool { 
+    p := &Pool{limit: limit} 
+    p.cond.L = &p.mu
+    return p
+}
+
+func (p *Pool) Release(c net.Conn) { p.mu.Lock()
+    defer p.mu.Unlock()
+    p.idle = append(p.idle, c)
+    p.cond.Signal()
+
+}
+
+func (p *Pool) Acquire() ( net.Conn, error) {
+    p.mu.Lock()
+    defer p.mu.Unlock() 
+    for len(p.idle) == 0 &&p.numConns >= p.limit { 
+        p.cond.Wait()
+    }
+    if len(p.idle) > 0 {
+        c := p.idle[len(p.idle)-1]
+        p.idle =p.idle[:len(p.idle)-1]
+        return c, nil
+    }
+    c, err := dial()
+    if err == nil {
+        p.numConns++
+    }
+    return c, err
+}
+```
+
+channel版本的资源池实现如下
+
+```
+type Pool struct {
+    sem chan token
+    idle chan net.Conn
+}
+type token struct{}
+func NewPool(limit int) *Pool { sem := make(chan token, limit) idle :=
+        make(chan net.Conn, limit)
+    return &Pool{sem, idle}
+}
+
+func (p *Pool) Release(c net.Conn) { p.idle <- c
+}
+func (p *Pool) Hijack(c net.Conn) {
+<-p.sem
+}
+
+func (p *Pool) Acquire(ctx context.Context) (net.Conn, error) { select {
+     case conn := <-p.idle:
+         return conn, nil
+     case p.sem <- token{}:
+         conn, err := dial()
+         if err != nil {
+<-p.sem
+}
+         return conn, err
+     case <-ctx.Done():
+         return nil, ctx.Err()
+     }
+}
+```
