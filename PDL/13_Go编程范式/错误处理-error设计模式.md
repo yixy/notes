@@ -15,8 +15,7 @@ error types interface {
 
 `errors.New(string)`方法可用于创建error，注意New函数这里返回的是指针类型，这样做是避免后续的等值比较出问题：
 
-
-```
+```go
 package main
 
 import (
@@ -73,7 +72,7 @@ Go的error的特点：
 
 典型的sentinel error模式如 io.EOF，以及更底层的 syscall.ENOENT。
 
-```
+```go
 #package io
 var EOF = errors.New("EOF")
 
@@ -95,7 +94,7 @@ func (e Errno) Error() string {
 
 典型的error types模式，例如 MyError 类型记录了文件和行号以展 示发生了什么。因为 MyError 是一个 type，调用者可以使用断言转换成这个类型，来获取更多的上下文信息。
 
-```
+```go
 type MyError struct{
 	Msg string
 	File string
@@ -135,7 +134,7 @@ func main() {
 * Opaque errors模式：只需返回错误而不假设其内容，是最灵活的错误处理策略，因为它要求代码和调用者之间的耦合最少。关于操作的结果，作为调用者所知道的就是它起作用了，或者没有起作用(成功还是失败)。
 
 
-```
+```go
 x,err:=foo.Bar()
 if err !=nil{
 	return err
@@ -143,11 +142,11 @@ if err !=nil{
 //use x
 ```
 
-** Assert errors for behaviour, not type **
+**Assert errors for behaviour, not type**
 
 少数情况下，如上的二分错误处理方法是不够的。例如，与进程外的世界进行交互(如网络活动)，需要调用方调查错误的性质，以确定重试该操作是否合理。在这种情况下，我们可以断言错误实 现了特定的行为，而不是断言错误是特定的类型或值。这里的关键是，这个逻辑可以在不导入定义错误的包或者实际上不了解 err 的底层类型的情况下实 现——我们只对它的行为感兴趣。这样通过函数来解耦了包之间的强依赖。
 
-```
+```go
 type timeoutFlag interface {
 	TimeoutFlag() bool
 }

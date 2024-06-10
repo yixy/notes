@@ -4,7 +4,7 @@
 
 采用如下的方式，无错误的正常流程代码将成为一条直线，而不是成为缩进的代码。
 
-```
+```go
 f,err:=os.Open(path)
 if err!=nil{
         //handle error
@@ -18,7 +18,7 @@ if err!=nil{
 
 eg1.
 
-```
+```go
 func AuthenticateRequest(r *Request) error {
         err := authenticate(r.User)
         if err != nil {
@@ -35,7 +35,7 @@ func AuthenticateRequest(r *Request) error {
 
 eg2.
 
-```
+```go
 func CountLines(r io.Reader) (int, error) {
         var (
                 br    = bufio.NewReader(r)
@@ -73,7 +73,7 @@ func CountLines(r io.Reader) (int, error) {
 
 When dealing with opening, writing and closing files, the error handling is present but not overwhelming as, the operations can be encapsulated in helpers like ioutil.ReadFile and ioutil.WriteFile. However, when dealing with low level network protocols it often becomes necessary to build the response directly using I/O primitives, thus the error handling can become repetitive. Consider this fragment of a HTTP server which is constructing a HTTP/1.1 response.(在处理打开、写入和关闭文件时，错误处理是存在的，但并不复杂，因为这些操作可以封装在 ioutil.ReadFile 和 ioutil.WriteFile 等帮助程序中。但是，在处理低级网络协议时，通常需要使用 I/O 原语直接构建响应，因此错误处理可能会变得重复。考虑构建 HTTP/1.1 响应的 HTTP 服务器的这个片段。)
 
-```
+```go
 type Header struct {
         Key, Value string
 }
@@ -110,7 +110,7 @@ we can make it easier on ourselves by introducing a small wrapper type.
 errWriter fulfils the io.Writer contract so it can be used to wrap an existing io.Writer. errWriter passes writes through to its underlying writer until an error is detected. From that point on, it discards any writes and returns the previous error.
 
 
-```
+```go
 type errWriter struct {
         io.Writer
         err error
@@ -148,7 +148,7 @@ func WriteResponse(w io.Writer, st Status, headers []Header, body io.Reader) err
 还记得之前优化之前的 auth 代码吧，如果 authenticate 返回错误，则 AuthenticateRequest 会将错 误返回给调用方，调用者可能也会这样做，依此类推。在程序的顶部，程序的主体将把错误打印到 屏幕或日志文件中，打印出来的只是：no such file or directory（没有这样的文件或目录）。
 
 
-```
+```go
 func AuthenticateRequest(r *Request) error {
         return authenticate(r.User)
 }
@@ -164,7 +164,7 @@ func AuthenticateRequest(r *Request) error {
 
 这种模式与 sentinel errors 或 type assertions 的使用不兼容，因为  fmt.Errorf 破坏了原始错误，可能导致调用方的等值判定失败。另外，这种合并拼接的方式信息格式比较乱，同时调用堆栈也比较难放入annatated中。
 
-```
+```go
 func AuthenticateRequest(r *Request) error {
         err := authenticate(r.User)
         if err != nil {
@@ -181,7 +181,7 @@ func AuthenticateRequest(r *Request) error {
 这种方式虽然上下文每个地方都打了日志，但实现上并不优雅，并且实际上日志看起来也不够清晰。另外，某些情况下，忘记处理（返回）错误，可能导致程序逻辑出现问题，存在相关的编码风险。
 
 
-```
+```go
 func AuthenticateRequest(r *Request) error {
         err := authenticate(r.User)
         if err != nil {
@@ -200,7 +200,7 @@ func AuthenticateRequest(r *Request) error {
 
 application代码中在handle产生根因错误的地方（高可重用性的代码库 或者 errors.New/errors.Errorf）去wrap，在最上层打印堆栈日志：
 
-```
+```go
 var GlobalErr error
 var GlobalErrI interface{}
 func ReadFile(path string) ([]byte, error) {
@@ -249,7 +249,7 @@ func main() {
 
 打印的堆栈信息如下：（根因错误、wrap的annotate、堆栈、其他层annotate）
 
-```
+```go
 //fmt.Printf("%+v",errs)
 //根因错误
 open /Users/youzhilane/.settings.xml: no such file or directory
@@ -302,7 +302,7 @@ Process finished with exit code 1
 
 Go 1.13在errors和fmt标准库包中引入了新功能以简化处理包含其他错误的错误。其中最重要的不是改变，而是一个约定：包含另一个错误的错误可以实现Unwrap方法来返回所包含的底层错误。如果e1.Unwrap()返回了e2，那么我们说e1包装了e2，您可以Unwrap e1来得到e2。
 
-```
+```go
 //go1.13中支持%w谓词添加annotate生成新error，类似于github.com/pkg/errors.WithMessage
 deErr:=fmt.Errorf("decompress %v: %w", name, err)
 //deErr.Unwrap可以返回底层的根因错误

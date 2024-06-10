@@ -18,12 +18,12 @@
 
 首先，先定义一个函数类型：（注意，这里server是小写，这样外部无法使用）
 
-```
+```go
 type option func(*server) 
 ```
 可以使用函数式的方式定义一组如下的函数：
 
-```
+```go
 func (s *server) Protocol(p string)  {
         s.Protocol = p
 }
@@ -43,7 +43,7 @@ func (s *server) TLS(tls *tls.Config)  {
 
 再定一个 NewServer()的函数，其中，有一个可变参数 options 其可以传出多个上面上的函数，然后使用一个for-loop来设置我们的 Server 对象。
 
-```
+```go
 func NewServer(addr string, port int, options ...func(*server)) (*Server, error) {
 
   srv := Server{
@@ -64,7 +64,7 @@ func NewServer(addr string, port int, options ...func(*server)) (*Server, error)
 
 注意下面这个例子，是另外一种定义方式，这里函数返回了option，是为了方便单元测试用例进行不同场景的切换。
 
-```
+```go
 type option func(*server) option
 
 func  Protocol(p string) option {
