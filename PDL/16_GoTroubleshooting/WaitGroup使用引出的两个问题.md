@@ -1,15 +1,10 @@
----
-date: "2019-07-21T00:25:04+08:00"
-lastmod: "2019-07-21T00:25:04+08:00"
-title: 56-Troubleshooting——WaitGroup使用引出的两个问题
----
 # Troubleshooting——WaitGroup使用引出的两个问题 #
 
 ## 1. WaitGroup的同步问题 ##
 
 以下代码没有任何输出。
 
-```
+```go
 package main
 import (
     "log"
@@ -39,7 +34,7 @@ func main() {
 
 下面代码存在的问题：wg 给拷贝传递到了 goroutine 中，导致只有 Add 操作，其实 Done操作是在 wg 的副本执行的。因此 Wait 就死锁了。
 
-```
+```go
 package main
 import (
     "log"
@@ -65,7 +60,7 @@ func main() {
 
 ## 3. 最终的例子 ##
 
-```
+```go
 package main
 
 import (
